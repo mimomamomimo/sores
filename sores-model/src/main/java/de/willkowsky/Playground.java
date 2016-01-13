@@ -1,8 +1,11 @@
 package de.willkowsky;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -19,8 +22,16 @@ public class Playground {
     private Block[] blocks;
     private Row[] rows;
 
+    public Playground() {
+
+    }
+
+    public Playground(File file) throws IOException {
+        initFields(file);
+    }
+
     public void setDims(int rows, int columns) {
-        initFieldArray(rows, columns);
+        initValueFields(rows, columns);
         initValueGroups();
     }
 
@@ -36,22 +47,22 @@ public class Playground {
         for (int blockIndex = 0; blockIndex < numberOfBlocks; blockIndex++) {
             ValueField[] fields = new ValueField[numValuesOfRow * numValuesOfCols];
             for (int fieldNumber = 0; fieldNumber < fields.length; fieldNumber++) {
-                int x = getXForBlock(blockIndex, fieldNumber);
-                int y = getYForBlock(blockIndex, fieldNumber);
+                int x = getXIndex(blockIndex, fieldNumber);
+                int y = getYIndex(blockIndex, fieldNumber);
                 fields[fieldNumber] = valueFields[y][x];
             }
             blocks[blockIndex] = new Block(fields, blockIndex);
         }
     }
 
-    protected int getYForBlock(int blockNumber, int fieldNumber) {
-        int remainderBlockNumber = blockNumber % 3;
-        int remainderFieldNumber = fieldNumber % 3;
-        return ((blockNumber - remainderBlockNumber)) + (fieldNumber - remainderFieldNumber) / 3;
+    protected int getYIndex(int blockNumber, int fieldNumber) {
+        int remainderBlockNumber = blockNumber %  numValuesOfRow;
+        int remainderFieldNumber = fieldNumber % numValuesOfRow;
+        return ((blockNumber - remainderBlockNumber)) + (fieldNumber - remainderFieldNumber) / numValuesOfRow;
     }
 
-    protected int getXForBlock(int blblockNumber, int fieldNumber) {
-        return (fieldNumber % numValuesOfRow) + ((blblockNumber % numValuesOfRow) * numValuesOfCols);
+    protected int getXIndex(int blockNumber, int fieldNumber) {
+        return (fieldNumber % numValuesOfRow) + ((blockNumber % numValuesOfRow) * numValuesOfCols);
     }
 
     private void initColumns() {
@@ -72,7 +83,7 @@ public class Playground {
         }
     }
 
-    private void initFieldArray(int rows, int columns) {
+    private void initValueFields(int rows, int columns) {
         valueFields = new ValueField[rows][columns];
         for (int i = 0; i < rows; i++) {
             for (int y = 0; y < columns; y++) {
@@ -98,7 +109,7 @@ public class Playground {
         StringBuilder builder = new StringBuilder("\n");
 
         for (ValueGroup row : rows) {
-            if (row.getIndex() % 3 == 0) {
+            if (row.getIndex() % numValuesOfCols == 0) {
                 builder.append(line);
             }
             builder.append(row.toString());
@@ -232,4 +243,17 @@ public class Playground {
         }
 
     }
+
+    private void initFields(File file) throws IOException {
+        List<String> strings = FileUtils.readLines(file);
+        setDims(9,9);
+        for (String string : strings) {
+            for (int i = 0; i  < string.length(); i++) {
+                int row = strings.indexOf(string);
+                int value = Integer.parseInt(String.valueOf(string.charAt(i)));
+                setValue(row, i, value);
+            }
+        }
+    }
+
 }

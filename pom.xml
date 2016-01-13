@@ -12,6 +12,7 @@
     <modules>
         <module>sores-features</module>
         <module>sores-model</module>
+        <module>sores-app</module>
     </modules>
 
     <build>

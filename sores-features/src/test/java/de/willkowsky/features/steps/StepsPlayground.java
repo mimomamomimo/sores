@@ -5,14 +5,13 @@ import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import de.willkowsky.Block;
 import de.willkowsky.Playground;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Assert;
 
 import java.io.File;
+import java.net.URI;
 import java.net.URL;
-import java.util.List;
 
 import static org.hamcrest.core.Is.is;
 
@@ -52,14 +51,14 @@ public class StepsPlayground {
     @Given("^ist ein Spielfeld mit (\\d+) Blöcken$")
     public void ist_ein_Spielfeld_mit_Blöcken(int amountOfBlocks) throws Throwable {
         playground = new Playground();
-        playground.setDims(9,9);
+        playground.setDims(9, 9);
     }
 
     @When("^der Block (\\d+) mit den Ziffern (\\d+) bis (\\d+) befüllt ist,$")
     public void der_Block_mit_den_Ziffern_bis_befüllt_ist(int arg1, int min, int max) throws Throwable {
         Block block = playground.getBlock(1);
 
-        for (int i = min; i<= max; i++) {
+        for (int i = min; i <= max; i++) {
             block.set(i, i);
         }
     }
@@ -77,35 +76,32 @@ public class StepsPlayground {
         String name = day + "-Januar.txt";
         ist_ein_Spielfeld_aus(name);
     }
+
     @Given("^ist ein Spielfeld aus \"(.*?)\"$")
     public void ist_ein_Spielfeld_aus(String fileName) throws Throwable {
         URL resource = this.getClass().getClassLoader().getResource(fileName);
-        File file =  new File(resource.toURI());
-        List<String> strings = FileUtils.readLines(file);
-        playground = new Playground();
-        playground.setDims(9,9);
-        for (String string : strings) {
-            for (int i = 0; i  < string.length(); i++) {
-                int row = strings.indexOf(string);
-                int value = Integer.parseInt(String.valueOf(string.charAt(i)));
-                playground.setValue(row, i, value);
-            }
+        if (resource == null) {
+            throw new RuntimeException(String.format("Die Datei %s konnte nicht gefunden werden!", fileName));
         }
+        URI uri = resource.toURI();
 
+
+        File file = new File(uri);
+        playground = new Playground(file);
         LOG.info(fileName + playground.toString());
     }
 
     @When("^das Spielfeld in jedem Block nur eine fehlende Ziffer hat$")
     public void das_Spielfeld_in_jedem_Block_nur_eine_fehlende_Ziffer_hat() throws Throwable {
-        playground.setValue(0,0,0);
-        playground.setValue(0,4,0);
-        playground.setValue(0,8,0);
-        playground.setValue(3,1,0);
-        playground.setValue(3,5,0);
-        playground.setValue(3,6,0);
-        playground.setValue(7,2,0);
-        playground.setValue(7,4,0);
-        playground.setValue(7,7,0);
+        playground.setValue(0, 0, 0);
+        playground.setValue(0, 4, 0);
+        playground.setValue(0, 8, 0);
+        playground.setValue(3, 1, 0);
+        playground.setValue(3, 5, 0);
+        playground.setValue(3, 6, 0);
+        playground.setValue(7, 2, 0);
+        playground.setValue(7, 4, 0);
+        playground.setValue(7, 7, 0);
 
         LOG.info(playground.toString());
     }
