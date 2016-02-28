@@ -13,6 +13,6 @@ mvn clean install
 
 java -jar sores-app/target/sores-app-1.0-SNAPSHOT.one-jar.jar example
 
-// and now we try to solve ist ..
+// and now we try to solve it ..
 
 java -jar sores-app/target/sores-app-1.0-SNAPSHOT.one-jar.jar example.txt
