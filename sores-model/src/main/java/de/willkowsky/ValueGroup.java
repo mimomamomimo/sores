@@ -1,6 +1,5 @@
 package de.willkowsky;
 
-
 import java.util.*;
 
 public class ValueGroup {
@@ -68,9 +67,13 @@ public class ValueGroup {
     public void resolve() {
         List<ValueField> fieldsWithZeroValue = getValueFieldsWithValue(0);
 
-        // alle Felder deren Wert 0 ist, sind in den Lösungsbaum mit zu übernehmen.
-        // In dem Baum stehen dann alle möglichen leeren felder auf einer Ebene untereinander.
-        // Wird das erste Feld mit einem Wert gefüllt entstehen dabei eine weitere ebene rechts neben der ersten, bei der der erste Wert schon eingetragen ist
+        // alle Felder deren Wert 0 ist, sind in den Lösungsbaum mit zu
+        // übernehmen.
+        // In dem Baum stehen dann alle möglichen leeren felder auf einer
+        // Ebene untereinander.
+        // Wird das erste Feld mit einem Wert gefüllt entsteht dabei eine
+        // weitere ebene rechts neben der ersten, bei der der erste Wert
+        // schon eingetragen ist
 
         for(ValueField valueField : fieldsWithZeroValue) {
             System.out.println(
@@ -106,7 +109,6 @@ public class ValueGroup {
 
         return false;
     }
-
 
     public List<ValueField> getUnresolvedFields() {
         List<ValueField> unresolvedFields = new ArrayList<>();
