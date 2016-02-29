@@ -20,16 +20,19 @@ java -jar sores-app/target/sores-app-1.0-SNAPSHOT.one-jar.jar example.txt
 
 // Die möglichen Lösungen werden in einem Lösungsbaum aufgelistet, dieser sieht so aus:
 
+
+```
 für folgendes Spiel würde so ein Baum aufgebaut werden (die 0en führen immer zu verzweigungen im Baum)
+
 003406789
-XXXXXXXXX
-XXXXXXXXX
-XXXXXXXXX
-XXXXXXXXX
-XXXXXXXXX
-XXXXXXXXX
-XXXXXXXXX
-XXXXXXXXX
+---------
+---------
+---------
+---------
+---------
+---------
+---------
+---------
 
 root
     node1_1_1
@@ -69,12 +72,16 @@ root
             node 5_1_3 // Lösung gefunden
 
 543436789
-XXXXXXXXX
-XXXXXXXXX
-XXXXXXXXX
-XXXXXXXXX
-XXXXXXXXX
-XXXXXXXXX
-XXXXXXXXX
-XXXXXXXXX
+---------
+---------
+---------
+---------
+---------
+---------
+---------
+---------
+```
+
+
+
 
