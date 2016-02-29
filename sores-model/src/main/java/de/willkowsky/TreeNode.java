@@ -8,4 +8,9 @@ import java.util.List;
 public class TreeNode {
     public ValueField valueField;
     public List<TreeNode> nodeList;
+    public String nodeName;
+
+    public TreeNode(String root) {
+        nodeName = root;
+    }
 }
