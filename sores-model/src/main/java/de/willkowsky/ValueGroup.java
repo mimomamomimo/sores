@@ -75,12 +75,14 @@ public class ValueGroup {
         // weitere ebene rechts neben der ersten, bei der der erste Wert
         // schon eingetragen ist
 
+        TreeNode rootNode = new TreeNode("root");
         for(ValueField valueField : fieldsWithZeroValue) {
             System.out.println(
                     "resolving valueField: " + valueField.getXIndex() + ":" +
                             valueField.getYIndex());
-            TreeNode treeNode = new TreeNode("root");
-            valueField.resolve(treeNode);
+            rootNode.addChild(new TreeNode(
+                    "" + valueField.getXIndex() + valueField.getYIndex()));
+            valueField.resolve(rootNode.getChildren().);
         }
     }
 
