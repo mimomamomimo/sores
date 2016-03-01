@@ -131,9 +131,9 @@ public class Playground {
             block.resolve();
         }
 
-        if(hasResolvableValueFields()) {
-            resolve();
-        }
+        //if(hasResolvableValueFields()) {
+        //    resolve();
+        // }
 
         // planb Lösung nicht mehr nötig, all Felder sind gelöst
         //else {
