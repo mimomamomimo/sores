@@ -60,11 +60,19 @@ public class ValueGroup {
     public String toString() {
         String rowFormat = "|%d%d%d|%d%d%d|%d%d%d|\n";
         return String.format(rowFormat, getValue(1), getValue(2), getValue(3),
-                getValue(4), getValue(5), getValue(6), getValue(7), getValue(8),
-                getValue(9));
+            getValue(4), getValue(5), getValue(6), getValue(7), getValue(8),
+            getValue(9));
     }
 
-    public void resolve() {
+    public void resolve(TreeNode startNode) {
+        List<ValueField> fieldsWithZeroValue = getValueFieldsWithValue(0);
+
+        for(ValueField valueField : fieldsWithZeroValue) {
+            resolve(null);
+        }
+    }
+
+    public void resolve2(TreeNode startNode) {
         List<ValueField> fieldsWithZeroValue = getValueFieldsWithValue(0);
 
         // alle Felder deren Wert 0 ist, sind in den Lösungsbaum mit zu
@@ -75,14 +83,18 @@ public class ValueGroup {
         // weitere ebene rechts neben der ersten, bei der der erste Wert
         // schon eingetragen ist
 
-        TreeNode rootNode = new TreeNode("root");
         for(ValueField valueField : fieldsWithZeroValue) {
+
             System.out.println(
-                    "resolving valueField: " + valueField.getXIndex() + ":" +
-                            valueField.getYIndex());
-            rootNode.addChild(new TreeNode(
-                    "" + valueField.getXIndex() + valueField.getYIndex()));
-            valueField.resolve(rootNode.getChildren().);
+                "resolving valueField: " + valueField.getXIndex() + ":" +
+                    valueField.getYIndex());
+            TreeNode newChildren = new TreeNode(
+                "" + valueField.getXIndex() + valueField.getYIndex());
+            startNode.addChild(newChildren);
+            if(valueField.getPossibleValues().size() > 0) {
+                valueField.setValue(valueField.getPossibleValues().get(0));
+            }
+            resolve(newChildren);
         }
     }
 

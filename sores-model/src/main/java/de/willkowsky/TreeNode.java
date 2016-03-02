@@ -13,8 +13,8 @@ public class TreeNode {
     public List<TreeNode> childrenList = new ArrayList<>();
     public String nodeName;
 
-    public TreeNode(String root) {
-        nodeName = root;
+    public TreeNode(String nodeName) {
+        this.nodeName = nodeName;
     }
 
     public void addChild(TreeNode treeNode) {

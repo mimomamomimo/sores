@@ -127,18 +127,19 @@ public class Playground {
     }
 
     public void resolve() {
+        TreeNode rootNode = new TreeNode("root");
         for(Block block : blocks) {
-            block.resolve();
+            block.resolve(rootNode);
         }
 
-        //if(hasResolvableValueFields()) {
-        //    resolve();
-        // }
+        if(hasResolvableValueFields()) {
+            resolve();
+        }
 
         // planb Lösung nicht mehr nötig, all Felder sind gelöst
-        //else {
-        //    resolveViaPLanB();
-        //}
+        else {
+            resolveViaPLanB();
+        }
     }
 
     private boolean hasResolvableValueFields() {
@@ -210,7 +211,7 @@ public class Playground {
                 }
             }
 
-            unresolvedField.resolve();
+            unresolvedField.resolve(null);
         }
     }
 

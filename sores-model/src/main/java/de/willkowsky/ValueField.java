@@ -24,12 +24,12 @@ public class ValueField {
         this.value = value;
     }
 
-    public void setValue(int value) {
-        this.value = value;
-    }
-
     public int getValue() {
         return value;
+    }
+
+    public void setValue(int value) {
+        this.value = value;
     }
 
     public void registerGroup(ValueGroup valueGroup) {
@@ -43,28 +43,29 @@ public class ValueField {
     public List<Integer> getPossibleValues() {
         Set<Integer> possibleValues = new HashSet<>();
 
-        for (ValueGroup valueGroup : groups) {
+        for(ValueGroup valueGroup : groups) {
             possibleValues.addAll(valueGroup.getMissingValues());
         }
 
-        for (ValueGroup valueGroup : groups) {
+        for(ValueGroup valueGroup : groups) {
             possibleValues.retainAll(valueGroup.getMissingValues());
         }
 
-        for (Integer impossibleValue : impossibleValues) {
+        for(Integer impossibleValue : impossibleValues) {
             possibleValues.remove(impossibleValue);
         }
 
         return new ArrayList<>(possibleValues);
     }
 
-    public void resolve(TreeNode treeNode) {
-        if(getPossibleValues()>0) {
-
+    public void resolve(TreeNode rootNode) {
+        if(getPossibleValues().size() > 0) {
+            TreeNode newNode = new TreeNode(indexX + "_" + indexY);
+            rootNode.addChild(newNode);
         }
-        if (getPossibleValues().size() == 1) {
-            setValue(getPossibleValues().get(0));
-        }
+        //if(getPossibleValues().size() == 1) {
+        //    setValue(getPossibleValues().get(0));
+        //}
     }
 
     public boolean isSolved() {
