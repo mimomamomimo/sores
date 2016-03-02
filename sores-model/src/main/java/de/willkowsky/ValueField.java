@@ -58,10 +58,7 @@ public class ValueField {
         return new ArrayList<>(possibleValues);
     }
 
-    public void resolve(TreeNode treeNode) {
-        if(getPossibleValues()>0) {
-
-        }
+    public void resolve() {
         if (getPossibleValues().size() == 1) {
             setValue(getPossibleValues().get(0));
         }

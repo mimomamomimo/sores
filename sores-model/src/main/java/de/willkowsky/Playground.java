@@ -4,10 +4,12 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 public class Playground {
 
@@ -44,9 +46,9 @@ public class Playground {
         blocks = new Block[numberOfBlocks];
         for(int blockIndex = 0; blockIndex < numberOfBlocks; blockIndex++) {
             ValueField[] fields =
-                    new ValueField[numValuesOfRow * numValuesOfCols];
+                new ValueField[numValuesOfRow * numValuesOfCols];
             for(int fieldNumber = 0; fieldNumber < fields.length;
-                    fieldNumber++) {
+                fieldNumber++) {
                 int x = getXIndex(blockIndex, fieldNumber);
                 int y = getYIndex(blockIndex, fieldNumber);
                 fields[fieldNumber] = valueFields[y][x];
@@ -59,12 +61,12 @@ public class Playground {
         int remainderBlockNumber = blockNumber % numValuesOfRow;
         int remainderFieldNumber = fieldNumber % numValuesOfRow;
         return ((blockNumber - remainderBlockNumber)) +
-                (fieldNumber - remainderFieldNumber) / numValuesOfRow;
+            (fieldNumber - remainderFieldNumber) / numValuesOfRow;
     }
 
     protected int getXIndex(int blockNumber, int fieldNumber) {
         return (fieldNumber % numValuesOfRow) +
-                ((blockNumber % numValuesOfRow) * numValuesOfCols);
+            ((blockNumber % numValuesOfRow) * numValuesOfCols);
     }
 
     private void initColumns() {
@@ -131,14 +133,11 @@ public class Playground {
             block.resolve();
         }
 
-        //if(hasResolvableValueFields()) {
-        //    resolve();
-        // }
-
-        // planb Lösung nicht mehr nötig, all Felder sind gelöst
-        //else {
-        //    resolveViaPLanB();
-        //}
+        if(hasResolvableValueFields()) {
+            resolve();
+        } else {
+            resolveViaPLanB();
+        }
     }
 
     private boolean hasResolvableValueFields() {
@@ -160,7 +159,7 @@ public class Playground {
         Comparator<? super ValueField> comp = new Comparator<ValueField>() {
             public int compare(ValueField o1, ValueField o2) {
                 return Integer.valueOf(o1.getPossibleValues().size())
-                        .compareTo(o2.getPossibleValues().size());
+                    .compareTo(o2.getPossibleValues().size());
             }
         };
 
@@ -181,19 +180,19 @@ public class Playground {
             for(Integer possibleValue : possibleValues) {
                 Playground planBPlayground = getPlanBPlayground();
                 planBPlayground.setValue(unresolvedField.getXIndex(),
-                        unresolvedField.getYIndex(), possibleValue);
+                    unresolvedField.getYIndex(), possibleValue);
                 LOG.info(String.format("Versuche Feld %s mit Wert %d (%s",
-                        unresolvedField.getXIndex() + "," +
-                                unresolvedField.getYIndex(), possibleValue,
-                        possibleValues.toString()));
+                    unresolvedField.getXIndex() + "," +
+                        unresolvedField.getYIndex(), possibleValue,
+                    possibleValues.toString()));
                 if(!planBPlayground.isInvalid()) {
                     LOG.info("PlanB scheint noch lösbar: \n" +
-                            planBPlayground.toString());
+                        planBPlayground.toString());
                     planBPlayground.resolve();
 
                     if(planBPlayground.isValid()) {
                         setValueFieldsAsDeepCopy(
-                                planBPlayground.getValueFields());
+                            planBPlayground.getValueFields());
                         initValueGroups();
 
                         resolve();
@@ -202,10 +201,10 @@ public class Playground {
                     }
                 } else {
                     LOG.info(String.format(
-                            "Für Feld %s ist der Wert %d falsch (%s",
-                            unresolvedField.getXIndex() + "," +
-                                    unresolvedField.getYIndex(), possibleValue,
-                            possibleValues.toString()));
+                        "Für Feld %s ist der Wert %d falsch (%s",
+                        unresolvedField.getXIndex() + "," +
+                            unresolvedField.getYIndex(), possibleValue,
+                        possibleValues.toString()));
                     unresolvedField.addImpossibleValue(possibleValue);
                 }
             }
@@ -249,12 +248,12 @@ public class Playground {
     public void setValueFieldsAsDeepCopy(ValueField[][] valueFields) {
 
         this.valueFields =
-                new ValueField[valueFields.length][valueFields[0].length];
+            new ValueField[valueFields.length][valueFields[0].length];
 
         for(int x = 0; x < valueFields.length; x++) {
             for(int y = 0; y < valueFields[0].length; y++) {
                 this.valueFields[x][y] =
-                        new ValueField(x, y, valueFields[x][y].getValue());
+                    new ValueField(x, y, valueFields[x][y].getValue());
             }
         }
 
