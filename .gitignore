@@ -1,1 +1,4 @@
-./.idea
+.idea
+*.iml
+example.txt
+target/
