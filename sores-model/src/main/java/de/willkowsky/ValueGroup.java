@@ -72,29 +72,11 @@ public class ValueGroup {
         }
     }
 
-    public void resolve2(TreeNode startNode) {
+    public void resolveForPlanB() {
         List<ValueField> fieldsWithZeroValue = getValueFieldsWithValue(0);
 
-        // alle Felder deren Wert 0 ist, sind in den Lösungsbaum mit zu
-        // übernehmen.
-        // In dem Baum stehen dann alle möglichen leeren felder auf einer
-        // Ebene untereinander.
-        // Wird das erste Feld mit einem Wert gefüllt entsteht dabei eine
-        // weitere ebene rechts neben der ersten, bei der der erste Wert
-        // schon eingetragen ist
-
         for(ValueField valueField : fieldsWithZeroValue) {
-
-            System.out.println(
-                "resolving valueField: " + valueField.getXIndex() + ":" +
-                    valueField.getYIndex());
-            TreeNode newChildren = new TreeNode(
-                "" + valueField.getXIndex() + valueField.getYIndex());
-            startNode.addChild(newChildren);
-            if(valueField.getPossibleValues().size() > 0) {
-                valueField.setValue(valueField.getPossibleValues().get(0));
-            }
-            resolve(newChildren);
+            valueField.resolveForPlanB();
         }
     }
 

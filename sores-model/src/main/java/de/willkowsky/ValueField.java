@@ -58,14 +58,16 @@ public class ValueField {
         return new ArrayList<>(possibleValues);
     }
 
+    public void resolveForPlanB() {
+        if(getPossibleValues().size() == 1) {
+            setValue(getPossibleValues().get(0));
+        }
+    }
     public void resolve(TreeNode rootNode) {
         if(getPossibleValues().size() > 0) {
             TreeNode newNode = new TreeNode(indexX + "_" + indexY);
             rootNode.addChild(newNode);
         }
-        //if(getPossibleValues().size() == 1) {
-        //    setValue(getPossibleValues().get(0));
-        //}
     }
 
     public boolean isSolved() {
