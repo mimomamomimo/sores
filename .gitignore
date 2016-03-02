@@ -1,4 +1,4 @@
 .idea
 *.iml
 example.txt
-*/target
+target/
