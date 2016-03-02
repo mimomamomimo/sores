@@ -1,5 +1,6 @@
 package de.willkowsky;
 
+
 import java.util.*;
 
 public class ValueGroup {
@@ -12,8 +13,8 @@ public class ValueGroup {
         this.valueFields = valueFields;
         this.index = index;
 
-        for(ValueField valueField : valueFields) {
-            if(valueField != null) {
+        for (ValueField valueField : valueFields) {
+            if (valueField != null) {
                 valueField.registerGroup(this);
             }
         }
@@ -26,8 +27,8 @@ public class ValueGroup {
     public boolean isValid() {
         Set<Integer> compareSet = new HashSet<>();
 
-        for(ValueField value : valueFields) {
-            if(value.getValue() != 0) {
+        for (ValueField value : valueFields) {
+            if (value.getValue() != 0) {
                 compareSet.add(value.getValue());
             }
         }
@@ -47,9 +48,9 @@ public class ValueGroup {
 
         List<Integer> missingValues = new ArrayList<>(allValues);
 
-        for(ValueField valueField : valueFields) {
+        for (ValueField valueField : valueFields) {
             int index = missingValues.indexOf(valueField.getValue());
-            if(index != -1) {
+            if (index != -1) {
                 missingValues.remove(index);
             }
         }
@@ -59,37 +60,22 @@ public class ValueGroup {
 
     public String toString() {
         String rowFormat = "|%d%d%d|%d%d%d|%d%d%d|\n";
-        return String.format(rowFormat, getValue(1), getValue(2), getValue(3),
-                getValue(4), getValue(5), getValue(6), getValue(7), getValue(8),
-                getValue(9));
+        return String.format(rowFormat, getValue(1), getValue(2), getValue(3), getValue(4), getValue(5), getValue(6),
+                getValue(7), getValue(8), getValue(9));
     }
 
     public void resolve() {
         List<ValueField> fieldsWithZeroValue = getValueFieldsWithValue(0);
 
-        // alle Felder deren Wert 0 ist, sind in den Lösungsbaum mit zu
-        // übernehmen.
-        // In dem Baum stehen dann alle möglichen leeren felder auf einer
-        // Ebene untereinander.
-        // Wird das erste Feld mit einem Wert gefüllt entsteht dabei eine
-        // weitere ebene rechts neben der ersten, bei der der erste Wert
-        // schon eingetragen ist
-
-        TreeNode rootNode = new TreeNode("root");
-        for(ValueField valueField : fieldsWithZeroValue) {
-            System.out.println(
-                    "resolving valueField: " + valueField.getXIndex() + ":" +
-                            valueField.getYIndex());
-            rootNode.addChild(new TreeNode(
-                    "" + valueField.getXIndex() + valueField.getYIndex()));
-            valueField.resolve(rootNode.getChildren().);
+        for (ValueField valueField : fieldsWithZeroValue) {
+            valueField.resolve();
         }
     }
 
     private List<ValueField> getValueFieldsWithValue(int i) {
         List<ValueField> valueFieldList = new ArrayList<>();
-        for(ValueField valueField : valueFields) {
-            if(valueField.getValue() == i) {
+        for (ValueField valueField : valueFields) {
+            if (valueField.getValue() == i) {
                 valueFieldList.add(valueField);
             }
         }
@@ -99,12 +85,12 @@ public class ValueGroup {
     public boolean hasResolvableValueFields() {
         List<ValueField> emptyFields = getValueFieldsWithValue(0);
 
-        if(emptyFields.isEmpty()) {
+        if (emptyFields.isEmpty()) {
             return false;
         }
 
-        for(ValueField emptyField : emptyFields) {
-            if(emptyField.getPossibleValues().size() == 1) {
+        for (ValueField emptyField : emptyFields) {
+            if (emptyField.getPossibleValues().size() == 1) {
                 return true;
             }
         }
@@ -112,11 +98,12 @@ public class ValueGroup {
         return false;
     }
 
+
     public List<ValueField> getUnresolvedFields() {
         List<ValueField> unresolvedFields = new ArrayList<>();
 
-        for(ValueField valueField : valueFields) {
-            if(!valueField.isSolved()) {
+        for (ValueField valueField : valueFields) {
+            if (!valueField.isSolved()) {
                 unresolvedFields.add(valueField);
             }
         }
@@ -124,8 +111,8 @@ public class ValueGroup {
     }
 
     public boolean isInvalid() {
-        for(ValueField valueField : valueFields) {
-            if(valueField.isInvalid()) {
+        for (ValueField valueField : valueFields) {
+            if (valueField.isInvalid()) {
                 return true;
             }
         }
