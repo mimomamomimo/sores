@@ -67,8 +67,27 @@ public class ValueGroup {
     public void resolve(TreeNode startNode) {
         List<ValueField> fieldsWithZeroValue = getValueFieldsWithValue(0);
 
+        if(fieldsWithZeroValue.size() == 0) {
+            // fertig, alle felder sind mit validen Werten gefüllt und somit
+            // das Spiel gelöst.
+            System.out.println("spiel ist gelöst");
+            return;
+        }
+
+        // try solving game by iterating all possible values in the
+        // first found field with zero in it. create a new subtree and resolve
+        // that subtree.
         for(ValueField valueField : fieldsWithZeroValue) {
-            resolve(null);
+
+            List<Integer> collect = valueField.getPossibleValues();
+            for(Integer integer : collect) {
+                TreeNode subTree = new TreeNode(
+                    valueField.getXIndex() + "_" + valueField.getYIndex() +
+                        "_" + integer);
+                valueField.setValue(integer);
+                startNode.addChild(subTree);
+                resolve(subTree);
+            }
         }
     }
 

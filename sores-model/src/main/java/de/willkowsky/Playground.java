@@ -136,9 +136,8 @@ public class Playground {
     }
 
     public void resolveWithPlanB() {
-        TreeNode rootNode = new TreeNode("root");
         for(Block block : blocks) {
-            block.resolveForPlanB(tNode);
+            block.resolveForPlanB();
         }
 
         if(hasResolvableValueFields()) {
