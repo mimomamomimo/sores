@@ -64,31 +64,43 @@ public class ValueGroup {
             getValue(9));
     }
 
-    public void resolve(TreeNode startNode) {
+    public boolean resolve(TreeNode startNode) {
         List<ValueField> fieldsWithZeroValue = getValueFieldsWithValue(0);
 
         if(fieldsWithZeroValue.size() == 0) {
             // fertig, alle felder sind mit validen Werten gefüllt und somit
             // das Spiel gelöst.
-            System.out.println("spiel ist gelöst");
-            return;
+            System.out.println("keine weiteren nichtgefüllten Felder " +
+                "gefunden, spiel ist damit gelöst");
+            return true;
         }
 
         // try solving game by iterating all possible values in the
         // first found field with zero in it. create a new subtree and resolve
         // that subtree.
+        boolean gameSolved = false;
         for(ValueField valueField : fieldsWithZeroValue) {
-
             List<Integer> collect = valueField.getPossibleValues();
             for(Integer integer : collect) {
-                TreeNode subTree = new TreeNode(
+                String nodeName =
                     valueField.getXIndex() + "_" + valueField.getYIndex() +
-                        "_" + integer);
+                        "_" + integer;
+                TreeNode subTree = new TreeNode(
+                    nodeName);
                 valueField.setValue(integer);
                 startNode.addChild(subTree);
-                resolve(subTree);
+                if(resolve(subTree)) {
+                    gameSolved = true;
+                    break;
+                }
+            }
+
+            if(gameSolved) {
+                break;
             }
         }
+
+        return gameSolved;
     }
 
     public void resolveForPlanB() {

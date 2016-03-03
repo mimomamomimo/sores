@@ -131,7 +131,9 @@ public class Playground {
     public void resolve() {
         TreeNode rootNode = new TreeNode("root");
         for(Block block : blocks) {
-            block.resolve(rootNode);
+            if(!block.resolve(rootNode)) {
+                System.out.println("Spiel konnte nicht gelöst werden");
+            }
         }
     }
 
