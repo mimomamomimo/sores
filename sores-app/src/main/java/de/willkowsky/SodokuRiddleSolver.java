@@ -39,7 +39,7 @@ public class SodokuRiddleSolver {
             System.exit(-1);
         }
 
-        Playground playground = getPlaygroundForInputFile(fileName);
+        Playground playground = ValueGroup.getPlaygroundForInputFile(fileName);
 
         String format = String.format("Beginne mit %s ...", fileName);
         LOG.info(format);
@@ -51,18 +51,6 @@ public class SodokuRiddleSolver {
         LOG.info(format1);
 
         System.exit(playground.isValid() ? 1 : -1);
-    }
-
-    private static Playground getPlaygroundForInputFile(String fileName) {
-        Playground playground = null;
-        try {
-            File file = FileUtils.getFile(fileName);
-            playground = new Playground(file);
-        } catch (IOException e) {
-            LOG.error(String.format("Fehler beim öffnen der Datei %s:", fileName), e);
-            System.exit(-1);
-        }
-        return playground;
     }
 
     private static String createExampleFile() throws IOException {

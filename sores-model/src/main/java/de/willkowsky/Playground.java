@@ -1,15 +1,17 @@
 package de.willkowsky;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.io.File;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Playground {
 
@@ -26,8 +28,8 @@ public class Playground {
 
     }
 
-    public Playground(File file) throws IOException {
-        initFields(file);
+    public Playground(InputStream in) throws IOException {
+        initFields(in);
     }
 
     public void setDims(int rows, int columns) {
@@ -44,11 +46,11 @@ public class Playground {
     private void initBlocks() {
         int numberOfBlocks = 9;
         blocks = new Block[numberOfBlocks];
-        for(int blockIndex = 0; blockIndex < numberOfBlocks; blockIndex++) {
+        for (int blockIndex = 0; blockIndex < numberOfBlocks; blockIndex++) {
             ValueField[] fields =
-                new ValueField[numValuesOfRow * numValuesOfCols];
-            for(int fieldNumber = 0; fieldNumber < fields.length;
-                fieldNumber++) {
+                    new ValueField[numValuesOfRow * numValuesOfCols];
+            for (int fieldNumber = 0; fieldNumber < fields.length;
+                    fieldNumber++) {
                 int x = getXIndex(blockIndex, fieldNumber);
                 int y = getYIndex(blockIndex, fieldNumber);
                 fields[fieldNumber] = valueFields[y][x];
@@ -61,19 +63,19 @@ public class Playground {
         int remainderBlockNumber = blockNumber % numValuesOfRow;
         int remainderFieldNumber = fieldNumber % numValuesOfRow;
         return ((blockNumber - remainderBlockNumber)) +
-            (fieldNumber - remainderFieldNumber) / numValuesOfRow;
+                (fieldNumber - remainderFieldNumber) / numValuesOfRow;
     }
 
     protected int getXIndex(int blockNumber, int fieldNumber) {
         return (fieldNumber % numValuesOfRow) +
-            ((blockNumber % numValuesOfRow) * numValuesOfCols);
+                ((blockNumber % numValuesOfRow) * numValuesOfCols);
     }
 
     private void initColumns() {
         Column[] columns = new Column[valueFields[0].length];
-        for(int colIndex = 0; colIndex < columns.length; colIndex++) {
+        for (int colIndex = 0; colIndex < columns.length; colIndex++) {
             ValueField[] fields = new ValueField[valueFields[0].length];
-            for(int rowIndex = 0; rowIndex < fields.length; rowIndex++) {
+            for (int rowIndex = 0; rowIndex < fields.length; rowIndex++) {
                 fields[rowIndex] = valueFields[rowIndex][colIndex];
             }
             columns[colIndex] = new Column(fields, colIndex);
@@ -82,15 +84,15 @@ public class Playground {
 
     private void initRows() {
         rows = new Row[valueFields.length];
-        for(int index = 0; index < valueFields.length; index++) {
+        for (int index = 0; index < valueFields.length; index++) {
             rows[index] = new Row(valueFields[index], index);
         }
     }
 
     private void initValueFields(int rows, int columns) {
         valueFields = new ValueField[rows][columns];
-        for(int i = 0; i < rows; i++) {
-            for(int y = 0; y < columns; y++) {
+        for (int i = 0; i < rows; i++) {
+            for (int y = 0; y < columns; y++) {
                 valueFields[i][y] = new ValueField(i, y);
             }
         }
@@ -112,8 +114,8 @@ public class Playground {
         String line = "------------\n";
         StringBuilder builder = new StringBuilder("\n");
 
-        for(ValueGroup row : rows) {
-            if(row.getIndex() % numValuesOfCols == 0) {
+        for (ValueGroup row : rows) {
+            if (row.getIndex() % numValuesOfCols == 0) {
                 builder.append(line);
             }
             builder.append(row.toString());
@@ -130,19 +132,19 @@ public class Playground {
 
     public void resolve() {
         TreeNode rootNode = new TreeNode("root");
-        for(Block block : blocks) {
-            if(!block.resolve(rootNode)) {
+        for (Block block : blocks) {
+            if (!block.resolve(rootNode)) {
                 System.out.println("Spiel konnte nicht gelöst werden");
             }
         }
     }
 
     public void resolveWithPlanB() {
-        for(Block block : blocks) {
+        for (Block block : blocks) {
             block.resolveForPlanB();
         }
 
-        if(hasResolvableValueFields()) {
+        if (hasResolvableValueFields()) {
             resolve();
         }
 
@@ -153,8 +155,8 @@ public class Playground {
     }
 
     private boolean hasResolvableValueFields() {
-        for(Block block : blocks) {
-            if(block.hasResolvableValueFields()) {
+        for (Block block : blocks) {
+            if (block.hasResolvableValueFields()) {
                 return true;
             }
         }
@@ -164,47 +166,47 @@ public class Playground {
     private void resolveViaPLanB() {
         List<ValueField> unresolvedFields = new ArrayList<>();
 
-        for(Block block : blocks) {
+        for (Block block : blocks) {
             unresolvedFields.addAll(block.getUnresolvedFields());
         }
 
         Comparator<? super ValueField> comp = new Comparator<ValueField>() {
             public int compare(ValueField o1, ValueField o2) {
                 return Integer.valueOf(o1.getPossibleValues().size())
-                    .compareTo(o2.getPossibleValues().size());
+                        .compareTo(o2.getPossibleValues().size());
             }
         };
 
         Collections.sort(unresolvedFields, comp);
 
-        if(unresolvedFields.isEmpty()) {
+        if (unresolvedFields.isEmpty()) {
             return;
         }
 
-        for(ValueField unresolvedField : unresolvedFields) {
+        for (ValueField unresolvedField : unresolvedFields) {
             List<Integer> possibleValues = unresolvedField.getPossibleValues();
 
-            if(possibleValues.size() == 1) {
+            if (possibleValues.size() == 1) {
                 unresolvedField.setValue(possibleValues.get(0));
                 continue;
             }
 
-            for(Integer possibleValue : possibleValues) {
+            for (Integer possibleValue : possibleValues) {
                 Playground planBPlayground = getPlanBPlayground();
                 planBPlayground.setValue(unresolvedField.getXIndex(),
-                    unresolvedField.getYIndex(), possibleValue);
+                        unresolvedField.getYIndex(), possibleValue);
                 LOG.info(String.format("Versuche Feld %s mit Wert %d (%s",
-                    unresolvedField.getXIndex() + "," +
-                        unresolvedField.getYIndex(), possibleValue,
-                    possibleValues.toString()));
-                if(!planBPlayground.isInvalid()) {
+                        unresolvedField.getXIndex() + "," +
+                                unresolvedField.getYIndex(), possibleValue,
+                        possibleValues.toString()));
+                if (!planBPlayground.isInvalid()) {
                     LOG.info("PlanB scheint noch lösbar: \n" +
-                        planBPlayground.toString());
+                            planBPlayground.toString());
                     planBPlayground.resolve();
 
-                    if(planBPlayground.isValid()) {
+                    if (planBPlayground.isValid()) {
                         setValueFieldsAsDeepCopy(
-                            planBPlayground.getValueFields());
+                                planBPlayground.getValueFields());
                         initValueGroups();
 
                         resolve();
@@ -213,10 +215,10 @@ public class Playground {
                     }
                 } else {
                     LOG.info(String.format(
-                        "Für Feld %s ist der Wert %d falsch (%s",
-                        unresolvedField.getXIndex() + "," +
-                            unresolvedField.getYIndex(), possibleValue,
-                        possibleValues.toString()));
+                            "Für Feld %s ist der Wert %d falsch (%s",
+                            unresolvedField.getXIndex() + "," +
+                                    unresolvedField.getYIndex(), possibleValue,
+                            possibleValues.toString()));
                     unresolvedField.addImpossibleValue(possibleValue);
                 }
             }
@@ -226,8 +228,8 @@ public class Playground {
     }
 
     private boolean isInvalid() {
-        for(Block block : blocks) {
-            if(block.isInvalid()) {
+        for (Block block : blocks) {
+            if (block.isInvalid()) {
                 return true;
             }
         }
@@ -246,7 +248,7 @@ public class Playground {
     public boolean isValid() {
         boolean result = true;
 
-        for(Block block : blocks) {
+        for (Block block : blocks) {
             result = result && block.isValid();
         }
 
@@ -260,19 +262,20 @@ public class Playground {
     public void setValueFieldsAsDeepCopy(ValueField[][] valueFields) {
 
         this.valueFields =
-            new ValueField[valueFields.length][valueFields[0].length];
+                new ValueField[valueFields.length][valueFields[0].length];
 
-        for(int x = 0; x < valueFields.length; x++) {
-            for(int y = 0; y < valueFields[0].length; y++) {
+        for (int x = 0; x < valueFields.length; x++) {
+            for (int y = 0; y < valueFields[0].length; y++) {
                 this.valueFields[x][y] =
-                    new ValueField(x, y, valueFields[x][y].getValue());
+                        new ValueField(x, y, valueFields[x][y].getValue());
             }
         }
 
     }
 
-    private void initFields(File file) throws IOException {
-        List<String> strings = FileUtils.readLines(file);
+    private void initFields(InputStream in) throws IOException {
+        BufferedReader buffer = new BufferedReader(new InputStreamReader(in));
+        List<String> strings = buffer.lines().collect(Collectors.toList());
         setDims(9, 9);
         for(String string : strings) {
             for(int i = 0; i < string.length(); i++) {
@@ -282,5 +285,4 @@ public class Playground {
             }
         }
     }
-
 }

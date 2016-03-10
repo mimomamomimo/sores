@@ -1,8 +1,18 @@
 package de.willkowsky;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.*;
 
 public class ValueGroup {
+
+    private static final Log LOG = LogFactory.getLog(ValueGroup.class);
 
     private List<Integer> allValues = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9);
     private ValueField[] valueFields;
@@ -12,8 +22,8 @@ public class ValueGroup {
         this.valueFields = valueFields;
         this.index = index;
 
-        for(ValueField valueField : valueFields) {
-            if(valueField != null) {
+        for (ValueField valueField : valueFields) {
+            if (valueField != null) {
                 valueField.registerGroup(this);
             }
         }
@@ -26,8 +36,8 @@ public class ValueGroup {
     public boolean isValid() {
         Set<Integer> compareSet = new HashSet<>();
 
-        for(ValueField value : valueFields) {
-            if(value.getValue() != 0) {
+        for (ValueField value : valueFields) {
+            if (value.getValue() != 0) {
                 compareSet.add(value.getValue());
             }
         }
@@ -47,9 +57,9 @@ public class ValueGroup {
 
         List<Integer> missingValues = new ArrayList<>(allValues);
 
-        for(ValueField valueField : valueFields) {
+        for (ValueField valueField : valueFields) {
             int index = missingValues.indexOf(valueField.getValue());
-            if(index != -1) {
+            if (index != -1) {
                 missingValues.remove(index);
             }
         }
@@ -60,42 +70,41 @@ public class ValueGroup {
     public String toString() {
         String rowFormat = "|%d%d%d|%d%d%d|%d%d%d|\n";
         return String.format(rowFormat, getValue(1), getValue(2), getValue(3),
-            getValue(4), getValue(5), getValue(6), getValue(7), getValue(8),
-            getValue(9));
+                getValue(4), getValue(5), getValue(6), getValue(7), getValue(8),
+                getValue(9));
     }
 
     public boolean resolve(TreeNode startNode) {
         List<ValueField> fieldsWithZeroValue = getValueFieldsWithValue(0);
 
-        if(fieldsWithZeroValue.size() == 0) {
+        if (fieldsWithZeroValue.size() == 0) {
             // fertig, alle felder sind mit validen Werten gefüllt und somit
             // das Spiel gelöst.
             System.out.println("keine weiteren nichtgefüllten Felder " +
-                "gefunden, spiel ist damit gelöst");
+                    "gefunden, spiel ist damit gelöst");
             return true;
         }
 
-        // try solving game by iterating all possible values in the
-        // first found field with zero in it. create a new subtree and resolve
-        // that subtree.
+        // try solving the game by iterating all possible values in the
+        // first found field with a value of zero in it. create a new subtree
+        // and resolve that subtree.
         boolean gameSolved = false;
-        for(ValueField valueField : fieldsWithZeroValue) {
+        for (ValueField valueField : fieldsWithZeroValue) {
             List<Integer> collect = valueField.getPossibleValues();
-            for(Integer integer : collect) {
+            for (Integer integer : collect) {
                 String nodeName =
-                    valueField.getXIndex() + "_" + valueField.getYIndex() +
-                        "_" + integer;
-                TreeNode subTree = new TreeNode(
-                    nodeName);
+                        valueField.getXIndex() + "_" + valueField.getYIndex() +
+                                "_" + integer;
+                TreeNode subTree = new TreeNode(nodeName);
                 valueField.setValue(integer);
                 startNode.addChild(subTree);
-                if(resolve(subTree)) {
+                if (resolve(subTree)) {
                     gameSolved = true;
                     break;
                 }
             }
 
-            if(gameSolved) {
+            if (gameSolved) {
                 break;
             }
         }
@@ -106,15 +115,15 @@ public class ValueGroup {
     public void resolveForPlanB() {
         List<ValueField> fieldsWithZeroValue = getValueFieldsWithValue(0);
 
-        for(ValueField valueField : fieldsWithZeroValue) {
+        for (ValueField valueField : fieldsWithZeroValue) {
             valueField.resolveForPlanB();
         }
     }
 
     private List<ValueField> getValueFieldsWithValue(int i) {
         List<ValueField> valueFieldList = new ArrayList<>();
-        for(ValueField valueField : valueFields) {
-            if(valueField.getValue() == i) {
+        for (ValueField valueField : valueFields) {
+            if (valueField.getValue() == i) {
                 valueFieldList.add(valueField);
             }
         }
@@ -124,12 +133,12 @@ public class ValueGroup {
     public boolean hasResolvableValueFields() {
         List<ValueField> emptyFields = getValueFieldsWithValue(0);
 
-        if(emptyFields.isEmpty()) {
+        if (emptyFields.isEmpty()) {
             return false;
         }
 
-        for(ValueField emptyField : emptyFields) {
-            if(emptyField.getPossibleValues().size() == 1) {
+        for (ValueField emptyField : emptyFields) {
+            if (emptyField.getPossibleValues().size() == 1) {
                 return true;
             }
         }
@@ -140,8 +149,8 @@ public class ValueGroup {
     public List<ValueField> getUnresolvedFields() {
         List<ValueField> unresolvedFields = new ArrayList<>();
 
-        for(ValueField valueField : valueFields) {
-            if(!valueField.isSolved()) {
+        for (ValueField valueField : valueFields) {
+            if (!valueField.isSolved()) {
                 unresolvedFields.add(valueField);
             }
         }
@@ -149,11 +158,26 @@ public class ValueGroup {
     }
 
     public boolean isInvalid() {
-        for(ValueField valueField : valueFields) {
-            if(valueField.isInvalid()) {
+        for (ValueField valueField : valueFields) {
+            if (valueField.isInvalid()) {
                 return true;
             }
         }
         return false;
+    }
+
+    public static Playground getPlaygroundForInputFile(String fileName) {
+        Playground playground = null;
+        try {
+            File file = FileUtils.getFile(fileName);
+
+            playground = new Playground(
+                    new BufferedInputStream(new FileInputStream(file)));
+        } catch (IOException e) {
+            LOG.error(String.format("Fehler beim Öffnen der Datei %s:",
+                    fileName), e);
+            System.exit(-1);
+        }
+        return playground;
     }
 }
