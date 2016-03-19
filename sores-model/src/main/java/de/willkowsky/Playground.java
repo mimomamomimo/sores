@@ -21,6 +21,7 @@ public class Playground {
     private ValueField[][] valueFields;
     private Block[] blocks;
     private Row[] rows;
+    private ResolveStrategy strategy = new PlanBStrategy();
 
     public Playground() {
 
@@ -28,6 +29,10 @@ public class Playground {
 
     public Playground(File file) throws IOException {
         initFields(file);
+    }
+
+    public Block[] getBlocks() {
+        return blocks;
     }
 
     public void setDims(int rows, int columns) {
@@ -129,18 +134,11 @@ public class Playground {
     }
 
     public void resolve() {
-        for(Block block : blocks) {
-            block.resolve();
-        }
+        strategy.resolve(this);
 
-        if(hasResolvableValueFields()) {
-            resolve();
-        } else {
-            resolveViaPLanB();
-        }
     }
 
-    private boolean hasResolvableValueFields() {
+    public boolean hasResolvableValueFields() {
         for(Block block : blocks) {
             if(block.hasResolvableValueFields()) {
                 return true;
@@ -149,71 +147,7 @@ public class Playground {
         return false;
     }
 
-    private void resolveViaPLanB() {
-        List<ValueField> unresolvedFields = new ArrayList<>();
-
-        for(Block block : blocks) {
-            unresolvedFields.addAll(block.getUnresolvedFields());
-        }
-
-        Comparator<? super ValueField> comp = new Comparator<ValueField>() {
-            public int compare(ValueField o1, ValueField o2) {
-                return Integer.valueOf(o1.getPossibleValues().size())
-                    .compareTo(o2.getPossibleValues().size());
-            }
-        };
-
-        Collections.sort(unresolvedFields, comp);
-
-        if(unresolvedFields.isEmpty()) {
-            return;
-        }
-
-        for(ValueField unresolvedField : unresolvedFields) {
-            List<Integer> possibleValues = unresolvedField.getPossibleValues();
-
-            if(possibleValues.size() == 1) {
-                unresolvedField.setValue(possibleValues.get(0));
-                continue;
-            }
-
-            for(Integer possibleValue : possibleValues) {
-                Playground planBPlayground = getPlanBPlayground();
-                planBPlayground.setValue(unresolvedField.getXIndex(),
-                    unresolvedField.getYIndex(), possibleValue);
-                LOG.info(String.format("Versuche Feld %s mit Wert %d (%s",
-                    unresolvedField.getXIndex() + "," +
-                        unresolvedField.getYIndex(), possibleValue,
-                    possibleValues.toString()));
-                if(!planBPlayground.isInvalid()) {
-                    LOG.info("PlanB scheint noch lösbar: \n" +
-                        planBPlayground.toString());
-                    planBPlayground.resolve();
-
-                    if(planBPlayground.isValid()) {
-                        setValueFieldsAsDeepCopy(
-                            planBPlayground.getValueFields());
-                        initValueGroups();
-
-                        resolve();
-                        LOG.info("Fertig: \n" + this.toString());
-                        return;
-                    }
-                } else {
-                    LOG.info(String.format(
-                        "Für Feld %s ist der Wert %d falsch (%s",
-                        unresolvedField.getXIndex() + "," +
-                            unresolvedField.getYIndex(), possibleValue,
-                        possibleValues.toString()));
-                    unresolvedField.addImpossibleValue(possibleValue);
-                }
-            }
-
-            unresolvedField.resolve();
-        }
-    }
-
-    private boolean isInvalid() {
+    public boolean isInvalid() {
         for(Block block : blocks) {
             if(block.isInvalid()) {
                 return true;
@@ -222,14 +156,6 @@ public class Playground {
         return false;
     }
 
-    private Playground getPlanBPlayground() {
-        Playground planB = new Playground();
-
-        planB.setValueFieldsAsDeepCopy(valueFields);
-        planB.initValueGroups();
-
-        return planB;
-    }
 
     public boolean isValid() {
         boolean result = true;
