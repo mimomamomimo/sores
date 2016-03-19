@@ -3,9 +3,6 @@ package de.willkowsky;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 public class PlanBStrategy implements ResolveStrategy {
@@ -14,7 +11,7 @@ public class PlanBStrategy implements ResolveStrategy {
     private Playground playground;
 
     @Override
-    public void resolve(Playground playground) {
+    public boolean resolve(Playground playground) {
 
         this.playground = playground;
 
@@ -23,10 +20,12 @@ public class PlanBStrategy implements ResolveStrategy {
         }
 
         if(playground.hasResolvableValueFields()) {
-            resolve(playground);
+            return resolve(playground);
         } else {
             resolveViaPLanB();
         }
+
+        return false;
     }
 
     private Playground getPlanBPlayground() {
@@ -39,17 +38,7 @@ public class PlanBStrategy implements ResolveStrategy {
     }
 
     private void resolveViaPLanB() {
-        List<ValueField> unresolvedFields = new ArrayList<>();
-
-        for(Block block : playground.getBlocks()) {
-            unresolvedFields.addAll(block.getUnresolvedFields());
-        }
-
-        Comparator<? super ValueField> comp =
-                (o1, o2) -> Integer.valueOf(o1.getPossibleValues().size())
-                        .compareTo(o2.getPossibleValues().size());
-
-        Collections.sort(unresolvedFields, comp);
+        List<ValueField> unresolvedFields = playground.getUnresolvedFields();
 
         if(unresolvedFields.isEmpty()) {
             return;
@@ -98,5 +87,6 @@ public class PlanBStrategy implements ResolveStrategy {
             unresolvedField.resolve();
         }
     }
+
 
 }

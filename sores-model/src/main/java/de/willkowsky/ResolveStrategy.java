@@ -1,5 +1,5 @@
 package de.willkowsky;
 
 public interface ResolveStrategy {
-    void resolve(Playground playground);
+    boolean resolve(Playground playground);
 }
