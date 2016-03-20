@@ -2,3 +2,4 @@
 *.iml
 example.txt
 target/
+*.DS_Store
