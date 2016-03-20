@@ -13,14 +13,14 @@ public class SodokuRiddleSolver {
 
     private static final String EXAMPLE =
             "800904630\n" +
-            "073020800\n" +
-            "009005402\n" +
-            "050700006\n" +
-            "080502090\n" +
-            "600003080\n" +
-            "908600100\n" +
-            "006090540\n" +
-            "012308007\n";
+                    "073020800\n" +
+                    "009005402\n" +
+                    "050700006\n" +
+                    "080502090\n" +
+                    "600003080\n" +
+                    "908600100\n" +
+                    "006090540\n" +
+                    "012308007\n";
 
     private static final String EXAMPLE_FILENAME = "example.txt";
 
@@ -47,7 +47,8 @@ public class SodokuRiddleSolver {
         playground.resolve();
 
         LOG.info(playground.toString());
-        String format1 = String.format(".. %s", playground.isValid() ? "geschafft!" : "hat nicht geklappt!");
+        String format1 = String.format(".. %s",
+                playground.isValid() ? "geschafft!" : "hat nicht geklappt!");
         LOG.info(format1);
 
         System.exit(playground.isValid() ? 1 : -1);

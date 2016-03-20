@@ -28,7 +28,7 @@ public class Playground {
 
     }
 
-    public Playground(InputStream in) throws IOException {
+    public Playground(InputStream in) {
         initFields(in);
     }
 
@@ -130,14 +130,14 @@ public class Playground {
         return valueFields[row][column];
     }
 
-    public void resolve() {
-        TreeNode rootNode = new TreeNode("root");
-        for (Block block : blocks) {
-            if (!block.resolve(rootNode)) {
-                System.out.println("Spiel konnte nicht gelöst werden");
-            }
-        }
-    }
+//    public void resolve() {
+//        TreeNode rootNode = new TreeNode("root");
+//        for (Block block : blocks) {
+//            if (!block.resolve(rootNode)) {
+//                System.out.println("Spiel konnte nicht gelöst werden");
+//            }
+//        }
+//    }
 
     public void resolveWithPlanB() {
         for (Block block : blocks) {
@@ -145,7 +145,7 @@ public class Playground {
         }
 
         if (hasResolvableValueFields()) {
-            resolve();
+            resolveWithPlanB();
         }
 
         // planb Lösung nicht mehr nötig, all Felder sind gelöst
@@ -202,14 +202,14 @@ public class Playground {
                 if (!planBPlayground.isInvalid()) {
                     LOG.info("PlanB scheint noch lösbar: \n" +
                             planBPlayground.toString());
-                    planBPlayground.resolve();
+                    planBPlayground.resolveWithPlanB();
 
                     if (planBPlayground.isValid()) {
                         setValueFieldsAsDeepCopy(
                                 planBPlayground.getValueFields());
                         initValueGroups();
 
-                        resolve();
+                        resolveWithPlanB();
                         LOG.info("Fertig: \n" + this.toString());
                         return;
                     }
@@ -223,7 +223,7 @@ public class Playground {
                 }
             }
 
-            unresolvedField.resolve(null);
+            unresolvedField.resolveForPlanB();
         }
     }
 
@@ -260,25 +260,22 @@ public class Playground {
     }
 
     public void setValueFieldsAsDeepCopy(ValueField[][] valueFields) {
-
-        this.valueFields =
-                new ValueField[valueFields.length][valueFields[0].length];
+        valueFields = new ValueField[valueFields.length][valueFields[0].length];
 
         for (int x = 0; x < valueFields.length; x++) {
             for (int y = 0; y < valueFields[0].length; y++) {
-                this.valueFields[x][y] =
+                valueFields[x][y] =
                         new ValueField(x, y, valueFields[x][y].getValue());
             }
         }
-
     }
 
-    private void initFields(InputStream in) throws IOException {
+    private void initFields(InputStream in) {
         BufferedReader buffer = new BufferedReader(new InputStreamReader(in));
         List<String> strings = buffer.lines().collect(Collectors.toList());
         setDims(9, 9);
-        for(String string : strings) {
-            for(int i = 0; i < string.length(); i++) {
+        for (String string : strings) {
+            for (int i = 0; i < string.length(); i++) {
                 int row = strings.indexOf(string);
                 int value = Integer.parseInt(String.valueOf(string.charAt(i)));
                 setValue(row, i, value);
