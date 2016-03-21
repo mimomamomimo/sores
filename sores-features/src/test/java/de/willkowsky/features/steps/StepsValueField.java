@@ -19,7 +19,7 @@ public class StepsValueField {
     @Given("^aus einem Spielfeld das Feld Reihe (\\d+), Spalte (\\d+)$")
     public void aus_einem_Spielfeld_das_Feld_Reihe_Spalte(int row, int column) throws Throwable {
         playground = new Playground();
-        playground.setDims(9, 9);
+        playground.initPlayground(9, 9);
         valueField = playground.getField(row,column);
     }
 

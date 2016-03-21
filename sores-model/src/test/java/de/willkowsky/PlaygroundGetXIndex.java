@@ -12,7 +12,7 @@ public class PlaygroundGetXIndex {
 
     @Before
     public void setup (){
-        playground.setDims(9,9);
+        playground.initPlayground(9,9);
     }
 
     @Test

@@ -24,10 +24,11 @@ public class Playground {
     private ResolveStrategy strategy = new PlanBStrategy();
 
     public Playground() {
-
+        initPlayground(9, 9);
     }
 
     public Playground(File file) throws IOException {
+        this();
         initFields(file);
     }
 
@@ -35,7 +36,7 @@ public class Playground {
         return blocks;
     }
 
-    public void setDims(int rows, int columns) {
+    public void initPlayground(int rows, int columns) {
         initValueFields(rows, columns);
         initValueGroups();
     }
@@ -185,7 +186,6 @@ public class Playground {
 
     private void initFields(File file) throws IOException {
         List<String> strings = FileUtils.readLines(file);
-        setDims(9, 9);
         for(String string : strings) {
             for(int i = 0; i < string.length(); i++) {
                 int row = strings.indexOf(string);

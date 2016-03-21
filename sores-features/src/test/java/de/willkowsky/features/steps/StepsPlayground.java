@@ -29,7 +29,7 @@ public class StepsPlayground {
 
     @When("^es (\\d+) x (\\d+) Wertefelder hat$")
     public void es_x_Wertefelder_hat(int rows, int columns) throws Throwable {
-        playground.setDims(rows, columns);
+        playground.initPlayground(rows, columns);
     }
 
     @Then("^dann kann das Wertefeld Zeile (\\d+), Spalte (\\d+) auf den Wert (\\d+) gesetzt werden$")
@@ -51,7 +51,7 @@ public class StepsPlayground {
     @Given("^ist ein Spielfeld mit (\\d+) Blöcken$")
     public void ist_ein_Spielfeld_mit_Blöcken(int amountOfBlocks) throws Throwable {
         playground = new Playground();
-        playground.setDims(9, 9);
+        playground.initPlayground(9, 9);
     }
 
     @When("^der Block (\\d+) mit den Ziffern (\\d+) bis (\\d+) befüllt ist,$")
