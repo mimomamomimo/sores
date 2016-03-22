@@ -63,14 +63,14 @@ public class PlanBStrategy implements ResolveStrategy {
                 if(!planBPlayground.isInvalid()) {
                     LOG.info("PlanB scheint noch lösbar: \n" +
                             planBPlayground.toString());
-                    planBPlayground.resolve();
+                    planBPlayground.resolve(new PlanBStrategy());
 
                     if(planBPlayground.isValid()) {
                         playground.setValueFieldsAsDeepCopy(
                                 planBPlayground.getValueFields());
                         playground.initValueGroups();
 
-                        playground.resolve();
+                        playground.resolve(new PlanBStrategy());
                         LOG.info("Fertig: \n" + this.toString());
                         return;
                     }

@@ -41,7 +41,7 @@
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
-                    <mainClass>de.willkowsky.SodokuRiddleSolver</mainClass>
+                    <mainClass>de.willkowsky.SudokuRiddleSolver</mainClass>
                 </configuration>
             </plugin>
 
@@ -55,7 +55,7 @@
                         <manifest>
                             <classpathPrefix>lib/</classpathPrefix>
                             <addClasspath>true</addClasspath>
-                            <mainClass>de.willkowsky.SodokuRiddleSolver</mainClass>
+                            <mainClass>de.willkowsky.SudokuRiddleSolver</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

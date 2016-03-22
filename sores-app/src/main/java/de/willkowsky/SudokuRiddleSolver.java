@@ -7,9 +7,9 @@ import org.apache.commons.logging.LogFactory;
 import java.io.File;
 import java.io.IOException;
 
-public class SodokuRiddleSolver {
+public class SudokuRiddleSolver {
 
-    private static final Log LOG = LogFactory.getLog(SodokuRiddleSolver.class);
+    private static final Log LOG = LogFactory.getLog(SudokuRiddleSolver.class);
 
     private static final String EXAMPLE =
             "800904630\n" +
@@ -44,7 +44,7 @@ public class SodokuRiddleSolver {
         String format = String.format("Beginne mit %s ...", fileName);
         LOG.info(format);
         LOG.info(playground.toString());
-        playground.resolve();
+        playground.resolve(new PlanBStrategy());
 
         LOG.info(playground.toString());
         String format1 = String.format(".. %s", playground.isValid() ? "geschafft!" : "hat nicht geklappt!");
@@ -57,7 +57,8 @@ public class SodokuRiddleSolver {
         Playground playground = null;
         try {
             File file = FileUtils.getFile(fileName);
-            playground = new Playground(file);
+            playground = new Playground();
+            playground.init(file);
         } catch (IOException e) {
             LOG.error(String.format("Fehler beim öffnen der Datei %s:", fileName), e);
             System.exit(-1);

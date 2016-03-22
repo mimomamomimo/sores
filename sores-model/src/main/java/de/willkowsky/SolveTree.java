@@ -1,31 +1,32 @@
 package de.willkowsky;
 
 public class SolveTree {
-
-    private SolveTree current;
+    private final String nodename;
+    private SolveTree currentSolveTree;
     private Playground playground;
     private SolveTree parent;
 
-    public SolveTree(SolveTree parent) {
+    public SolveTree(String nodename, SolveTree parent) {
         this.parent = parent;
-        current = this;
+        this.nodename = nodename;
+        currentSolveTree = this;
     }
 
     public SolveTree getCurrentNode() {
-        return current;
+        return currentSolveTree;
     }
 
-    public SolveTree addNode(Playground playground) {
-        current = new SolveTree(this);
-        current.playground = playground;
-        return current;
+    public SolveTree addNode(String nodename, Playground playground) {
+        currentSolveTree = new SolveTree(nodename, this);
+        currentSolveTree.playground = playground;
+        return currentSolveTree;
     }
 
-    public boolean resolve() {
-        return playground.resolve();
+    public boolean resolve(ResolveStrategy resolveStrategy) {
+        return playground.resolve(resolveStrategy);
     }
 
     public void discard() {
-        current = parent;
+        currentSolveTree = parent;
     }
 }

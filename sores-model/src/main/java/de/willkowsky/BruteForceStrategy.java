@@ -5,7 +5,7 @@ import java.util.List;
 public class BruteForceStrategy implements ResolveStrategy {
 
     private Playground playground;
-    private SolveTree solveTree = new SolveTree(null);
+    private SolveTree solveTree = new SolveTree("root", null);
 
     @Override
     public boolean resolve(Playground playground) {
@@ -31,8 +31,15 @@ public class BruteForceStrategy implements ResolveStrategy {
                 Playground handsomeTryRabbit = playground.copy();
                 handsomeTryRabbit.setValue(field.getXIndex(), field.getYIndex(),
                         possibleValue);
-                SolveTree node = solveTree.getCurrentNode().addNode(handsomeTryRabbit);
-                solved = node.resolve();
+                String nodename = field.getXIndex() + "_" + field.getYIndex()
+                        + "_" + possibleValue;
+                SolveTree node =
+                        solveTree.getCurrentNode().addNode
+                                (nodename, handsomeTryRabbit);
+                System.out.println(
+                        "added another treenode " + nodename +
+                                ", now trying to solve the new node");
+                solved = node.resolve(this);
                 if(!solved) {
                     field.addImpossibleValue(possibleValue);
                     return false;

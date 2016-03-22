@@ -21,14 +21,16 @@ public class Playground {
     private ValueField[][] valueFields;
     private Block[] blocks;
     private Row[] rows;
-    private ResolveStrategy strategy = new PlanBStrategy();
 
     public Playground() {
         initPlayground(9, 9);
     }
 
-    public Playground(File file) throws IOException {
-        this();
+    //public Playground(File file) throws IOException {
+    //    init(file);
+    //}
+
+    public void init(File file) throws IOException {
         initFields(file);
     }
 
@@ -134,7 +136,7 @@ public class Playground {
         return valueFields[row][column];
     }
 
-    public boolean resolve() {
+    public boolean resolve(ResolveStrategy strategy) {
         return strategy.resolve(this);
     }
 

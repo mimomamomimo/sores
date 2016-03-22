@@ -4,6 +4,7 @@ import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import de.willkowsky.Block;
+import de.willkowsky.PlanBStrategy;
 import de.willkowsky.Playground;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -33,32 +34,39 @@ public class StepsPlayground {
     }
 
     @Then("^dann kann das Wertefeld Zeile (\\d+), Spalte (\\d+) auf den Wert (\\d+) gesetzt werden$")
-    public void dann_kann_das_Wertefeld_Zeile_Spalte_auf_den_Wert_gesetzt_werden(int row, int column, int value) throws Throwable {
+    public void dann_kann_das_Wertefeld_Zeile_Spalte_auf_den_Wert_gesetzt_werden(
+            int row, int column, int value) throws Throwable {
         playground.setValue(row, column, value);
     }
 
     @When("^und das Feld in Zeile (\\d+), Spalte (\\d+) auf den Wert (\\d+) gesetzt wird$")
-    public void und_das_Feld_in_Zeile_Spalte_auf_den_Wert_gesetzt_wird(int row, int column, int value) throws Throwable {
+    public void und_das_Feld_in_Zeile_Spalte_auf_den_Wert_gesetzt_wird(int row,
+            int column, int value) throws Throwable {
         playground.setValue(row, column, value);
     }
 
     @Then("^dann ist in dem Feld Zeile (\\d+) Spalte (\\d+) den Wert (\\d+) gesetzt$")
-    public void dann_ist_in_dem_Feld_Zeile_Spalte_den_Wert_gesetzt(int row, int column, int value) throws Throwable {
+    public void dann_ist_in_dem_Feld_Zeile_Spalte_den_Wert_gesetzt(int row,
+            int column, int value) throws Throwable {
         Integer fieldValue = playground.get(row, column);
-        Assert.assertTrue(String.format("Das Feld soll den Wert %d haben", fieldValue), value == fieldValue);
+        Assert.assertTrue(
+                String.format("Das Feld soll den Wert %d haben", fieldValue),
+                value == fieldValue);
     }
 
     @Given("^ist ein Spielfeld mit (\\d+) Blöcken$")
-    public void ist_ein_Spielfeld_mit_Blöcken(int amountOfBlocks) throws Throwable {
+    public void ist_ein_Spielfeld_mit_Blöcken(int amountOfBlocks)
+            throws Throwable {
         playground = new Playground();
         playground.initPlayground(9, 9);
     }
 
     @When("^der Block (\\d+) mit den Ziffern (\\d+) bis (\\d+) befüllt ist,$")
-    public void der_Block_mit_den_Ziffern_bis_befüllt_ist(int arg1, int min, int max) throws Throwable {
+    public void der_Block_mit_den_Ziffern_bis_befüllt_ist(int arg1, int min,
+            int max) throws Throwable {
         Block block = playground.getBlock(1);
 
-        for (int i = min; i <= max; i++) {
+        for(int i = min; i <= max; i++) {
             block.set(i, i);
         }
     }
@@ -80,19 +88,22 @@ public class StepsPlayground {
     @Given("^ist ein Spielfeld aus \"(.*?)\"$")
     public void ist_ein_Spielfeld_aus(String fileName) throws Throwable {
         URL resource = this.getClass().getClassLoader().getResource(fileName);
-        if (resource == null) {
-            throw new RuntimeException(String.format("Die Datei %s konnte nicht gefunden werden!", fileName));
+        if(resource == null) {
+            throw new RuntimeException(
+                    String.format("Die Datei %s konnte nicht gefunden werden!",
+                            fileName));
         }
         URI uri = resource.toURI();
 
-
         File file = new File(uri);
-        playground = new Playground(file);
+        playground = new Playground();
+        playground.init(file);
         LOG.info(fileName + playground.toString());
     }
 
     @When("^das Spielfeld in jedem Block nur eine fehlende Ziffer hat$")
-    public void das_Spielfeld_in_jedem_Block_nur_eine_fehlende_Ziffer_hat() throws Throwable {
+    public void das_Spielfeld_in_jedem_Block_nur_eine_fehlende_Ziffer_hat()
+            throws Throwable {
         playground.setValue(0, 0, 0);
         playground.setValue(0, 4, 0);
         playground.setValue(0, 8, 0);
@@ -108,8 +119,9 @@ public class StepsPlayground {
 
     @Then("^dann kann es gelöst werden$")
     public void dann_kann_es_gelöst_werden() throws Throwable {
-        playground.resolve();
-        Assert.assertThat(playground.toString(), playground.isValid(), is(true));
+        playground.resolve(new PlanBStrategy());
+        Assert.assertThat(playground.toString(), playground.isValid(),
+                is(true));
 
         LOG.info(playground.toString());
     }
@@ -118,6 +130,5 @@ public class StepsPlayground {
     public void das_Spielfeld_seine_Lücken_hat() throws Throwable {
         // Spiel hat bereits Lücken ..
     }
-
 
 }
