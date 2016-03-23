@@ -31,6 +31,7 @@ public class BruteForceStrategy implements ResolveStrategy {
                 // dieser Zweig ist nicht mehr lösbar, gehe zum elternzweig
                 return false;
             }
+            //possibleValues.stream().forEach(p -> System.out.println(p));
 
             for(Integer possibleValue : possibleValues) {
                 Playground handsomeTryRabbitPlayground = playground.copy();
@@ -53,11 +54,7 @@ public class BruteForceStrategy implements ResolveStrategy {
                 }
             }
 
-            if(!solved) {
-                return false;
-            } else {
-                return true;
-            }
+            break;
         }
         return solved;
     }
