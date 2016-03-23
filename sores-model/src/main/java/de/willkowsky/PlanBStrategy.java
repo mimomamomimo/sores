@@ -38,7 +38,7 @@ public class PlanBStrategy implements ResolveStrategy {
     }
 
     private void resolveViaPLanB() {
-        List<ValueField> unresolvedFields = playground.getUnresolvedFields();
+        List<ValueField> unresolvedFields = playground.getUnresolvedFieldsByBlock();
 
         if(unresolvedFields.isEmpty()) {
             return;

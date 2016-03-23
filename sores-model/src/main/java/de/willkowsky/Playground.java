@@ -197,7 +197,21 @@ public class Playground {
         }
     }
 
-    public List<ValueField> getUnresolvedFields() {
+    public List<ValueField> getUnresolvedFieldsByColumnAndRow() {
+        List<ValueField> result = new ArrayList<>();
+
+        for(ValueField[] row : valueFields) {
+            for(ValueField valueField : row) {
+                if(valueField.getValue() == 0) {
+                    result.add(valueField);
+                }
+            }
+        }
+
+        return result;
+    }
+
+    public List<ValueField> getUnresolvedFieldsByBlock() {
         List<ValueField> unresolvedFields = new ArrayList<>();
 
         for(Block block : getBlocks()) {

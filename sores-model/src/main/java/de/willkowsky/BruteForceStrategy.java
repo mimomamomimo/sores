@@ -2,49 +2,60 @@ package de.willkowsky;
 
 import java.util.List;
 
+// Die Brute Force Strategy löst ein Feld und ruft rekursiv sich selbst mit den
+// verbleibenden Möglichkeiten wieder auf.
 public class BruteForceStrategy implements ResolveStrategy {
 
     private Playground playground;
-    private SolveTree solveTree = new SolveTree("root", null);
+    private SolveNode solveNode =
+            new SolveNode(SolveNode.rootNodeName, null, null);
 
     @Override
     public boolean resolve(Playground playground) {
         this.playground = playground;
-        boolean solved = false;
+        System.out.println("resolving playground " + playground);
 
-        if(playground.getUnresolvedFields().size() == 0) {
+        boolean solved = false;
+        if(solveNode.getPlayground() == null && solveNode.getNodename().equals
+                (SolveNode.rootNodeName)) {
+            solveNode.setPlayground(playground);
+        }
+
+        if(playground.getUnresolvedFieldsByColumnAndRow().size() == 0) {
             return true;
         }
 
-        // Die Brute force strategy löst ein Feld und ruft rekursiv sich mit dem
-        // verbleibenden Möglichkeiten selbst wieder auf.
-
-        for(ValueField field : playground.getUnresolvedFields()) {
-
+        for(ValueField field : playground.getUnresolvedFieldsByColumnAndRow()) {
             List<Integer> possibleValues = field.getPossibleValues();
-
-            if(possibleValues.size() == 1) {
-                field.setValue(1);
+            if(possibleValues.size() == 0) {
+                // dieser Zweig ist nicht mehr lösbar, gehe zum elternzweig
+                return false;
             }
 
             for(Integer possibleValue : possibleValues) {
-                Playground handsomeTryRabbit = playground.copy();
-                handsomeTryRabbit.setValue(field.getXIndex(), field.getYIndex(),
-                        possibleValue);
+                Playground handsomeTryRabbitPlayground = playground.copy();
+                handsomeTryRabbitPlayground
+                        .setValue(field.getXIndex(), field.getYIndex(),
+                                possibleValue);
                 String nodename = field.getXIndex() + "_" + field.getYIndex()
                         + "_" + possibleValue;
-                SolveTree node =
-                        solveTree.getCurrentNode().addNode
-                                (nodename, handsomeTryRabbit);
+                SolveNode node = solveNode
+                        .addNode(nodename, handsomeTryRabbitPlayground);
                 System.out.println(
                         "added another treenode " + nodename +
                                 ", now trying to solve the new node");
                 solved = node.resolve(this);
                 if(!solved) {
+                    System.out.println("with " + nodename +
+                            " the playground is no longer solveable");
                     field.addImpossibleValue(possibleValue);
-                    return false;
+                } else {
+                    break;
                 }
+            }
 
+            if(!solved) {
+                return false;
             }
         }
 
