@@ -41,9 +41,8 @@ public class BruteForceStrategy implements ResolveStrategy {
                         + "_" + possibleValue;
                 SolveNode node = solveNode
                         .addNode(nodename, handsomeTryRabbitPlayground);
-                System.out.println(
-                        "added another treenode " + nodename +
-                                ", now trying to solve the new node");
+                System.out.println("added another treenode " + nodename +
+                        ", now trying to solve the new node");
                 solved = node.resolve(this);
                 if(!solved) {
                     System.out.println("with " + nodename +
@@ -56,6 +55,8 @@ public class BruteForceStrategy implements ResolveStrategy {
 
             if(!solved) {
                 return false;
+            } else {
+                return true;
             }
         }
         return solved;
