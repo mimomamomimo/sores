@@ -4,7 +4,7 @@ import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import de.willkowsky.Block;
-import de.willkowsky.PlanBStrategy;
+import de.willkowsky.BruteForceStrategy;
 import de.willkowsky.Playground;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -15,6 +15,7 @@ import java.net.URI;
 import java.net.URL;
 
 import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
 
 @SuppressWarnings("unused")
 public class StepsPlayground {
@@ -41,13 +42,13 @@ public class StepsPlayground {
 
     @When("^und das Feld in Zeile (\\d+), Spalte (\\d+) auf den Wert (\\d+) gesetzt wird$")
     public void und_das_Feld_in_Zeile_Spalte_auf_den_Wert_gesetzt_wird(int row,
-            int column, int value) throws Throwable {
+                                                                       int column, int value) throws Throwable {
         playground.setValue(row, column, value);
     }
 
     @Then("^dann ist in dem Feld Zeile (\\d+) Spalte (\\d+) den Wert (\\d+) gesetzt$")
     public void dann_ist_in_dem_Feld_Zeile_Spalte_den_Wert_gesetzt(int row,
-            int column, int value) throws Throwable {
+                                                                   int column, int value) throws Throwable {
         Integer fieldValue = playground.get(row, column);
         Assert.assertTrue(
                 String.format("Das Feld soll den Wert %d haben", fieldValue),
@@ -63,10 +64,10 @@ public class StepsPlayground {
 
     @When("^der Block (\\d+) mit den Ziffern (\\d+) bis (\\d+) befüllt ist,$")
     public void der_Block_mit_den_Ziffern_bis_befüllt_ist(int arg1, int min,
-            int max) throws Throwable {
+                                                          int max) throws Throwable {
         Block block = playground.getBlock(1);
 
-        for(int i = min; i <= max; i++) {
+        for (int i = min; i <= max; i++) {
             block.set(i, i);
         }
     }
@@ -88,7 +89,7 @@ public class StepsPlayground {
     @Given("^ist ein Spielfeld aus \"(.*?)\"$")
     public void ist_ein_Spielfeld_aus(String fileName) throws Throwable {
         URL resource = this.getClass().getClassLoader().getResource(fileName);
-        if(resource == null) {
+        if (resource == null) {
             throw new RuntimeException(
                     String.format("Die Datei %s konnte nicht gefunden werden!",
                             fileName));
@@ -119,11 +120,12 @@ public class StepsPlayground {
 
     @Then("^dann kann es gelöst werden$")
     public void dann_kann_es_gelöst_werden() throws Throwable {
-        playground.resolve(new PlanBStrategy());
-        Assert.assertThat(playground.toString(), playground.isValid(),
-                is(true));
+        BruteForceStrategy strategy = new BruteForceStrategy();
+        playground.resolve(strategy);
+        Playground solvedPlayground = strategy.getSolvedPlayground();
+        LOG.info(solvedPlayground.toString());
+        assertThat(solvedPlayground.isValid(), is(true));
 
-        LOG.info(playground.toString());
     }
 
     @When("^das Spielfeld seine Lücken hat$")

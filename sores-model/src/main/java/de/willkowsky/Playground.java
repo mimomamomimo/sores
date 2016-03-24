@@ -26,10 +26,6 @@ public class Playground {
         initPlayground(9, 9);
     }
 
-    //public Playground(File file) throws IOException {
-    //    init(file);
-    //}
-
     public void init(File file) throws IOException {
         initFields(file);
     }
@@ -52,11 +48,9 @@ public class Playground {
     private void initBlocks() {
         int numberOfBlocks = 9;
         blocks = new Block[numberOfBlocks];
-        for(int blockIndex = 0; blockIndex < numberOfBlocks; blockIndex++) {
-            ValueField[] fields =
-                    new ValueField[numValuesOfRow * numValuesOfCols];
-            for(int fieldNumber = 0; fieldNumber < fields.length;
-                    fieldNumber++) {
+        for (int blockIndex = 0; blockIndex < numberOfBlocks; blockIndex++) {
+            ValueField[] fields = new ValueField[numValuesOfRow * numValuesOfCols];
+            for (int fieldNumber = 0; fieldNumber < fields.length; fieldNumber++) {
                 int x = getXIndex(blockIndex, fieldNumber);
                 int y = getYIndex(blockIndex, fieldNumber);
                 fields[fieldNumber] = valueFields[y][x];
@@ -68,20 +62,18 @@ public class Playground {
     protected int getYIndex(int blockNumber, int fieldNumber) {
         int remainderBlockNumber = blockNumber % numValuesOfRow;
         int remainderFieldNumber = fieldNumber % numValuesOfRow;
-        return ((blockNumber - remainderBlockNumber)) +
-                (fieldNumber - remainderFieldNumber) / numValuesOfRow;
+        return ((blockNumber - remainderBlockNumber)) + (fieldNumber - remainderFieldNumber) / numValuesOfRow;
     }
 
     protected int getXIndex(int blockNumber, int fieldNumber) {
-        return (fieldNumber % numValuesOfRow) +
-                ((blockNumber % numValuesOfRow) * numValuesOfCols);
+        return (fieldNumber % numValuesOfRow) + ((blockNumber % numValuesOfRow) * numValuesOfCols);
     }
 
     private void initColumns() {
         Column[] columns = new Column[valueFields[0].length];
-        for(int colIndex = 0; colIndex < columns.length; colIndex++) {
+        for (int colIndex = 0; colIndex < columns.length; colIndex++) {
             ValueField[] fields = new ValueField[valueFields[0].length];
-            for(int rowIndex = 0; rowIndex < fields.length; rowIndex++) {
+            for (int rowIndex = 0; rowIndex < fields.length; rowIndex++) {
                 fields[rowIndex] = valueFields[rowIndex][colIndex];
             }
             columns[colIndex] = new Column(fields, colIndex);
@@ -90,15 +82,15 @@ public class Playground {
 
     private void initRows() {
         rows = new Row[valueFields.length];
-        for(int index = 0; index < valueFields.length; index++) {
+        for (int index = 0; index < valueFields.length; index++) {
             rows[index] = new Row(valueFields[index], index);
         }
     }
 
     private void initValueFields(int rows, int columns) {
         valueFields = new ValueField[rows][columns];
-        for(int i = 0; i < rows; i++) {
-            for(int y = 0; y < columns; y++) {
+        for (int i = 0; i < rows; i++) {
+            for (int y = 0; y < columns; y++) {
                 valueFields[i][y] = new ValueField(i, y);
             }
         }
@@ -120,8 +112,8 @@ public class Playground {
         String line = "------------\n";
         StringBuilder builder = new StringBuilder("\n");
 
-        for(ValueGroup row : rows) {
-            if(row.getIndex() % numValuesOfCols == 0) {
+        for (ValueGroup row : rows) {
+            if (row.getIndex() % numValuesOfCols == 0) {
                 builder.append(line);
             }
             builder.append(row.toString());
@@ -141,8 +133,8 @@ public class Playground {
     }
 
     public boolean hasResolvableValueFields() {
-        for(Block block : blocks) {
-            if(block.hasResolvableValueFields()) {
+        for (Block block : blocks) {
+            if (block.hasResolvableValueFields()) {
                 return true;
             }
         }
@@ -150,8 +142,8 @@ public class Playground {
     }
 
     public boolean isInvalid() {
-        for(Block block : blocks) {
-            if(block.isInvalid()) {
+        for (Block block : blocks) {
+            if (block.isInvalid()) {
                 return true;
             }
         }
@@ -161,7 +153,7 @@ public class Playground {
     public boolean isValid() {
         boolean result = true;
 
-        for(Block block : blocks) {
+        for (Block block : blocks) {
             result = result && block.isValid();
         }
 
@@ -174,13 +166,11 @@ public class Playground {
 
     public void setValueFieldsAsDeepCopy(ValueField[][] valueFields) {
 
-        this.valueFields =
-                new ValueField[valueFields.length][valueFields[0].length];
+        this.valueFields = new ValueField[valueFields.length][valueFields[0].length];
 
-        for(int x = 0; x < valueFields.length; x++) {
-            for(int y = 0; y < valueFields[0].length; y++) {
-                this.valueFields[x][y] =
-                        new ValueField(x, y, valueFields[x][y].getValue());
+        for (int x = 0; x < valueFields.length; x++) {
+            for (int y = 0; y < valueFields[0].length; y++) {
+                this.valueFields[x][y] = new ValueField(x, y, valueFields[x][y].getValue());
             }
         }
 
@@ -188,8 +178,8 @@ public class Playground {
 
     private void initFields(File file) throws IOException {
         List<String> strings = FileUtils.readLines(file);
-        for(String string : strings) {
-            for(int i = 0; i < string.length(); i++) {
+        for (String string : strings) {
+            for (int i = 0; i < string.length(); i++) {
                 int row = strings.indexOf(string);
                 int value = Integer.parseInt(String.valueOf(string.charAt(i)));
                 setValue(row, i, value);
@@ -200,9 +190,9 @@ public class Playground {
     public List<ValueField> getUnresolvedFieldsByColumnAndRow() {
         List<ValueField> result = new ArrayList<>();
 
-        for(ValueField[] row : valueFields) {
-            for(ValueField valueField : row) {
-                if(valueField.getValue() == 0) {
+        for (ValueField[] row : valueFields) {
+            for (ValueField valueField : row) {
+                if (valueField.getValue() == 0) {
                     result.add(valueField);
                 }
             }
@@ -214,24 +204,23 @@ public class Playground {
     public List<ValueField> getUnresolvedFieldsByBlock() {
         List<ValueField> unresolvedFields = new ArrayList<>();
 
-        for(Block block : getBlocks()) {
+        for (Block block : getBlocks()) {
             unresolvedFields.addAll(block.getUnresolvedFields());
         }
 
-        Comparator<? super ValueField> comp =
-                (o1, o2) -> Integer.valueOf(o1.getPossibleValues().size())
-                        .compareTo(o2.getPossibleValues().size());
+        Comparator<? super ValueField> comp = (o1, o2) -> Integer.valueOf(o1.getPossibleValues().size()).compareTo(o2.getPossibleValues().size());
 
         Collections.sort(unresolvedFields, comp);
+
         return unresolvedFields;
     }
 
     public Playground copy() {
-        Playground planB = new Playground();
+        Playground copy = new Playground();
 
-        planB.setValueFieldsAsDeepCopy(getValueFields());
-        planB.initValueGroups();
+        copy.setValueFieldsAsDeepCopy(getValueFields());
+        copy.initValueGroups();
 
-        return planB;
+        return copy;
     }
 }
