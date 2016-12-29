@@ -44,7 +44,7 @@ public class SudokuRiddleSolver {
         String format = String.format("Beginne mit %s ...", fileName);
         LOG.info(format);
         LOG.info(playground.toString());
-        playground.resolve(new PlanBStrategy());
+        playground.resolve(new BruteForceStrategy());
 
         LOG.info(playground.toString());
         String format1 = String.format(".. %s", playground.isValid() ? "geschafft!" : "hat nicht geklappt!");
